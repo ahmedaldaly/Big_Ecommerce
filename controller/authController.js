@@ -4,14 +4,14 @@ const bcrypt = require('bcrypt');
 const Jwt = require('jsonwebtoken');
 const passport = require("passport"); 
 const GoogleStrategy = require("passport-google-oauth20").Strategy; 
-
+const nodemailer = require('nodemailer');
 
 passport.use(
     new GoogleStrategy(
       {
         clientID: process.env.GOOGLE_CLIENT_ID, 
         clientSecret: process.env.GOOGLE_CLIENT_SECRET, 
-        callbackURL: "http://localhost:4000/api/vl/auth/google/callback"
+        callbackURL: "https://big-ecommerce.vercel.app/api/vl/auth/google/callback"
   
   
       },
@@ -126,3 +126,63 @@ module.exports.Login = asyncHandler(async (req, res) => {
         res.status(200).json(find)
     } catch (err) { res.status(500).json(err) }
 })
+
+module.exports.sendResetCode = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+  const user = await User.findOne({ email });
+  if (!user) return res.status(404).json({ message: 'User not found' });
+
+  const resetCode = Math.floor(100000 + Math.random() * 900000).toString(); // مثال: 6 أرقام
+
+  user.resetCode = resetCode;
+  user.resetCodeExpires = Date.now() + 15 * 60 * 1000; // صلاحية الكود 15 دقيقة
+  await user.save();
+
+  // إرسال الإيميل
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: 'ranaandahmed55@gmail.com',
+      pass: process.env.PASSWORD
+    }
+  });
+
+  await transporter.sendMail({
+    from: `"App Support" <ranaandahmed55@gmail.com>`,
+    to: email,
+    subject: 'رمز إعادة تعيين كلمة المرور',
+    html: `
+      <p>رمز التحقق الخاص بك هو: <b>${resetCode}</b></p>
+      <p>الرمز صالح لمدة 15 دقيقة.</p>
+    `
+  });
+
+  res.status(200).json({ message: 'تم إرسال رمز التحقق إلى بريدك الإلكتروني' });
+});
+
+module.exports.verifyResetCode = asyncHandler(async (req, res) => {
+  const { email, code } = req.body;
+  const user = await User.findOne({ email });
+
+  if (!user || user.resetCode !== code || Date.now() > user.resetCodeExpires) {
+    return res.status(400).json({ message: 'رمز غير صالح أو منتهي' });
+  }
+
+  res.status(200).json({ message: 'تم التحقق من الرمز بنجاح' });
+});
+
+module.exports.setNewPassword = asyncHandler(async (req, res) => {
+  const { email, code, newPassword } = req.body;
+  const user = await User.findOne({ email });
+
+  if (!user || user.resetCode !== code || Date.now() > user.resetCodeExpires) {
+    return res.status(400).json({ message: 'رمز غير صالح أو منتهي' });
+  }
+
+  user.password = await bcrypt.hash(newPassword, 10);
+  user.resetCode = null;
+  user.resetCodeExpires = null;
+  await user.save();
+
+  res.status(200).json({ message: 'تم تغيير كلمة المرور بنجاح' });
+});

@@ -27,6 +27,10 @@ const UserSchema =new mongoose.Schema({
         trim:true,
       
     },
+    resetCode:{
+        type:Number,
+        trim:true
+    },
     password:{
         type:String,
         required:true,
