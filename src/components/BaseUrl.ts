@@ -1,0 +1,1 @@
+export const BaseUrl = 'https://big-ecommerce.vercel.app'
