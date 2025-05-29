@@ -5,12 +5,15 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "author": "",
   "engines": {
     "node": "22.14.0"
   },
+  "homepage": "https://ahmedaldaly.github.io/Big_Ecommerce",
   "license": "ISC",
   "description": "",
   "dependencies": {
@@ -38,5 +41,8 @@
     "serverless-http": "^3.2.0",
     "streamifier": "^0.1.1",
     "xss-clean": "^0.1.4"
+  },
+  "devDependencies": {
+    "gh-pages": "^6.3.0"
   }
 }
