@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { IoMdHeartEmpty } from "react-icons/io";
 import { FiShoppingCart } from "react-icons/fi";
 import { LuUserRound } from "react-icons/lu";
@@ -8,12 +8,13 @@ import { RiCloseFill } from "react-icons/ri";
 import { IoSearchOutline } from "react-icons/io5";
 import { IoMenu } from "react-icons/io5";
 import {Link} from 'react-router-dom'
+import cookie from 'js-cookie'
 const Header = () => {
     const { i18n } = useTranslation();
     const [isFocused, setIsFocused] = useState(false);
     const [searchValue, setSearchValue] = useState('');
     const inputRef = useRef<HTMLInputElement>(null);
-
+    const [token, setToken] = useState('')
     const handleClearSearch = () => {
         setSearchValue('');
         // إعادة التركيز إلى حقل البحث بعد المسح
@@ -22,6 +23,10 @@ const Header = () => {
     const changeLanguage = (lang: string) => {
         i18n.changeLanguage(lang);
     };
+useEffect(() => {
+    const token = cookie.get('token') || '';
+    setToken(token);
+}, []);
 
     return (
         <header className='w-full h-16 bg-gray-50 max-md:justify-between max-md:px-5 flex justify-evenly items-center '>
@@ -80,11 +85,14 @@ const Header = () => {
                     <FiShoppingCart className='text-xl' />
                     <span className=' max-md:hidden'>{i18n.language === 'ar' ? 'السلة' : 'Cart'}</span>
                 </div>
-
-                <Link to ='/register' className='flex justify-center items-center hover:text-blue-500 hover:scale-105 w-auto px-2 h-10 hover:rounded-md duration-300 hover:bg-gray-100 gap-1'>
+                {token ?  <Link to ='/account' className='flex justify-center items-center hover:text-blue-500 hover:scale-105 w-auto px-2 h-10 hover:rounded-md duration-300 hover:bg-gray-100 gap-1'>
                     <LuUserRound className='text-xl'/>
                     <span className='max-md:hidden'>{i18n.language === 'ar' ? 'حسابي' : 'My Account'}</span>
-                </Link>
+                </Link>:  <Link to ='/login' className='flex justify-center items-center hover:text-blue-500 hover:scale-105 w-auto px-2 h-10 hover:rounded-md duration-300 hover:bg-gray-100 gap-1'>
+                    <LuUserRound className='text-xl'/>
+                    <span className='max-md:hidden'>{i18n.language === 'ar' ? 'حسابي' : 'My Account'}</span>
+                </Link>}
+              
               
 
                 <button

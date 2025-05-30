@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { BaseUrl } from '../../components/BaseUrl';
 import cookie from 'js-cookie';
+import { FaGoogle } from "react-icons/fa";
 
 type FormData = {
   email: string;
@@ -91,17 +92,17 @@ const LogIn = () => {
         {errors.email && (
           <p className='text-red-600 text-sm mb-4'>{errors.email.message}</p>
         )}
-
         <label>{Arabic ? 'كلمة السر' : 'Password'}</label>
         <div className='relative'>
           <input
             placeholder={Arabic ? 'ادخل كلمة السر' : 'Enter your password'}
-            className='w-full px-5 mt-2 border-2 border-gray-300 rounded-md h-10 pr-10'
+            className='w-full px-5 my-2 border-2 border-gray-300 rounded-md h-10 pr-10'
             type={showPassword ? 'text' : 'password'}
             {...register("password", {
               required: Arabic ? 'كلمة السر مطلوبة' : 'Password is required',
             })}
           />
+            <Link className=' font-bold text-gray-500 ' to=''>{Arabic ? 'نسيت كلمة السر؟':'forgot your password?'}</Link>
           <button
             type="button"
             onClick={() => setShowPassword(prev => !prev)}
@@ -127,6 +128,10 @@ const LogIn = () => {
               : 'Log In'}
         </button>
       </form>
+      <Link to={`${BaseUrl}/api/vl/auth/google`} className='w-44 h-12 border-2 border-gray-200 flex justify-center items-center gap-2 rounded-xl hover:scale-105 hover:shadow-md duration-300 mt-5 mx-auto text-gray-500'>
+        <FaGoogle/>
+        {Arabic? "عبر جوجل":" Google"}
+      </Link>
     </div>
   );
 };
