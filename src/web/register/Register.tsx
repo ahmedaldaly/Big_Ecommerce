@@ -19,7 +19,7 @@ const Register = () => {
   const Arabic = i18n.language === 'ar'
 
   const [showPassword, setShowPassword] = useState(false)
-  const [loadimg, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
   const [messageType, setMessageType] = useState<'success' | 'error' | ''>('')
 
@@ -107,7 +107,8 @@ const Register = () => {
           type="submit"
           className='w-full cursor-pointer hover:bg-[#56129C] transition-all duration-300 px-5 bg-[#7016CD] text-white mt-10 rounded-md h-10'
         >
-          {Arabic ? 'انشاء حساب' : 'Create Account'}
+         
+          {loading ? Arabic?'جار التحميل ...':"loading ...":Arabic ? 'انشاء حساب' : 'Create Account'}
         </button>
       </form>
 
