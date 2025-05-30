@@ -1,19 +1,19 @@
 import { createRoot } from 'react-dom/client'
 import './index.css'
-import App from './App.tsx'
+import App from './web/App.tsx'
 import './i18n';
-import Header from './components/Header/Header.tsx';
 import {BrowserRouter , Route ,Routes} from 'react-router-dom'
-import Register from './register/Register.tsx';
+import Register from './web/register/Register.tsx';
+import Admin from './admin/Admin.tsx';
 
 
 createRoot(document.getElementById('root')!).render(
 
   <BrowserRouter>
-    <Header/>
+    
     <Routes>
-  <Route path='/' element={<App/>}/>
-  <Route path='/register' element={<Register/>}/>
+  <Route path='/*' element={<App/>}/>
+  <Route path='/admin' element={<Admin/>}/>
 </Routes>
   </BrowserRouter>,
 )
